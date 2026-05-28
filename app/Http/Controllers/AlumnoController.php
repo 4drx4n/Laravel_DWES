@@ -4,26 +4,27 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\Alumno;
 
-class AlumnoController extends Controller
-{
+class AlumnoController extends Controller{
+
     // Obtener todos
-    public function index()
-    {
+    public function index(){
+
         $alumnos = DB::table('alumno')->get();
         return response()->json($alumnos);
     }
 
     // Obtener por id
-    public function show($id)
-    {
+    public function show($id){
+
         $alumno = DB::table('alumno')->where('id', $id)->first();
         return response()->json($alumno);
     }
 
     // Crear
-    public function store(Request $request)
-    {
+    public function store(Request $request){
+
         $request->validate([
             'nombre' => 'required|max:32',
             'email' => 'required|email|unique:alumno',
@@ -45,8 +46,8 @@ class AlumnoController extends Controller
     }
 
     // Modificar
-    public function update(Request $request, $id)
-    {
+    public function update(Request $request, $id){
+
         DB::table('alumno')->where('id', $id)->update([
             'nombre' => $request->nombre,
             'telefono' => $request->telefono,
@@ -61,9 +62,35 @@ class AlumnoController extends Controller
     }
 
     // Borrar
-    public function destroy($id)
-    {
+    public function destroy($id){
+
         DB::table('alumno')->where('id', $id)->delete();
         return response()->json(['mensaje' => 'Alumno eliminado']);
+    }
+
+    public function curso($id){
+
+        $alumno = Alumno::find($id);
+        
+        if (!$alumno){
+            return response()->json([
+                'mensaje' => 'Alumno no encontrado'
+            ], 404);
+        }
+
+        return response()->json($alumno->curso);
+    }
+
+    public function historialAcademico($id){
+        
+        $alumno = Alumno::find($id);
+
+        if (!$alumno){
+            return response()->json([
+                'mensaje' => 'Alumno no encontrado'
+            ], 404);
+        }
+
+        return response()->json($alumno->historialAcademico);
     }
 }
